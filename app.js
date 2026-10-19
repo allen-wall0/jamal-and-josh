@@ -50,7 +50,7 @@ function draw(){sp+=(tsp-sp)*.03;x.globalAlpha=1;x.fillStyle=BG;x.fillRect(0,0,W
 addEventListener('resize',rs);addEventListener('mousemove',e=>{mx=e.clientX/W-.5;my=e.clientY/H-.5});rs();draw();
 /* sound + stillness */
 const a=$('#bgm');let muted=false,vol=0,tv=.6,tm;
-setInterval(()=>{vol+=(tv-vol)*.08;a.volume=muted?0:Math.max(0,Math.min(1,vol))},50);
+setInterval(()=>{vol+=(tv-vol)*.08;a.volume=muted?0:Math.max(0,Math.min(1,vol*(window.JI&&JI.mv!=null?JI.mv:1)))},50);
 $('#mute').onclick=()=>{muted=!muted;$('#mute').style.opacity=muted?.4:1;$('#mute').setAttribute('aria-label',muted?'Unmute music':'Mute music')};
 function act(){document.body.classList.remove('still');tsp=RM?0:1;tv=window.JI&&JI.on?.1:.6;clearTimeout(tm);if(!(window.JI&&JI.on))tm=setTimeout(()=>{document.body.classList.add('still');tsp=0;tv=0},10000)}
 $('#enter').onclick=()=>{a.play().catch(()=>{});$('#gate').style.opacity=0;setTimeout(()=>$('#gate').remove(),1200);$('#nav').hidden=false;
@@ -60,7 +60,7 @@ $('#enter').onclick=()=>{a.play().catch(()=>{});$('#gate').style.opacity=0;setTi
 window.JI={on:false,a,set:v=>{tv=v}};
 $('#no3').onclick=()=>$('#warn').hidden=true;
 $('#go3').onclick=async()=>{$('#warn').hidden=true;JI.on=true;document.body.classList.remove('still');clearTimeout(tm);JI.set(.1);a.playbackRate=.85;
- const back=()=>{JI.on=false;a.playbackRate=1;JI.set(.6);act()};
+ const back=()=>{JI.mv=1;JI.on=false;a.playbackRate=1;JI.set(.6);act()};
  try{const m=await import('./world.js');m.start({comfort:$('#cm').checked,fx:$('#fx').value,scares:$('#sc').checked,subs:$('#sb').checked,onExit:back})}catch(e){back();console.error(e);alert('The world could not start.\n\nReason: '+(e&&e.message||e)+'\n\nIf this mentions a module, fetch or import, the page is probably opened as a file (double-click) or three.module.min.js / world.js is missing from the repo. If it mentions WebGL, turn on hardware acceleration in your browser.')}};
 
 function setMode(j){P=j?JS:JP;document.body.classList.toggle('josh',j);BG=j?'#0a0d08':'#07080d';FG=j?'#9fb28a':'#ebe6da';SPD=j?3:1;$('#back').hidden=!j;cur=-1;buildDots();go(0)}

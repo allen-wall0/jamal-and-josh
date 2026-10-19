@@ -40,3 +40,4 @@ body.josh{--ink:#0a0d08;--bone:#d8e0cc;--gold:#b3262a;--dim:#7f8a74;background:v
 .doug{font-size:clamp(3rem,13vw,7rem);letter-spacing:.2em}.memo{max-width:34rem;margin:0 auto 1.6rem;line-height:1.7}
 @keyframes gr{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-2%)}100%{transform:translate(0,0)}}
 #warn select{background:#000;color:var(--bone);border:1px solid var(--dim);font:inherit;padding:.2em .4em}
+body.inworld #stage,body.inworld #nav,body.inworld #sky,body.inworld #hush{visibility:hidden}
