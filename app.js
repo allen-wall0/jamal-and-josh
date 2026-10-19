@@ -61,7 +61,7 @@ window.JI={on:false,a,set:v=>{tv=v}};
 $('#no3').onclick=()=>$('#warn').hidden=true;
 $('#go3').onclick=async()=>{$('#warn').hidden=true;JI.on=true;document.body.classList.remove('still');clearTimeout(tm);JI.set(.1);a.playbackRate=.85;
  const back=()=>{JI.on=false;a.playbackRate=1;JI.set(.6);act()};
- try{const m=await import('./world.js');m.start({comfort:$('#cm').checked,fx:$('#fx').value,onExit:back})}catch(e){back();console.error(e);alert('The world could not start.\n\nReason: '+(e&&e.message||e)+'\n\nIf this mentions a module, fetch or import, the page is probably opened as a file (double-click) or three.module.min.js / world.js is missing from the repo. If it mentions WebGL, turn on hardware acceleration in your browser.')}};
+ try{const m=await import('./world.js');m.start({comfort:$('#cm').checked,fx:$('#fx').value,scares:$('#sc').checked,subs:$('#sb').checked,onExit:back})}catch(e){back();console.error(e);alert('The world could not start.\n\nReason: '+(e&&e.message||e)+'\n\nIf this mentions a module, fetch or import, the page is probably opened as a file (double-click) or three.module.min.js / world.js is missing from the repo. If it mentions WebGL, turn on hardware acceleration in your browser.')}};
 
 function setMode(j){P=j?JS:JP;document.body.classList.toggle('josh',j);BG=j?'#0a0d08':'#07080d';FG=j?'#9fb28a':'#ebe6da';SPD=j?3:1;$('#back').hidden=!j;cur=-1;buildDots();go(0)}
 async function flip(to){const im=$('#pt')||$('#jt');if(!im||busy)return;busy=true;const a=(r)=>im.animate([{transform:'perspective(600px) rotateY('+r[0]+'deg)'},{transform:'perspective(600px) rotateY('+r[1]+'deg)'}],{duration:450,fill:'forwards',easing:'ease-in-out'}).finished;

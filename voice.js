@@ -1,0 +1,7 @@
+let ac,out,ready=false,active=0;export const voiceBusy=()=>active;
+export function initVoice(a,o){ac=a;out=o;try{const s=document.createElement('script');s.src='mespeak/mespeak.js';s.onload=()=>{Promise.all([fetch('mespeak/mespeak_config.json').then(r=>r.json()),fetch('mespeak/en-us.json').then(r=>r.json())]).then(([c,v])=>{meSpeak.loadConfig(c);meSpeak.loadVoice(v);ready=true}).catch(()=>{})};s.onerror=()=>{};document.head.appendChild(s)}catch(e){}}
+function play(buf,deep,rate,pan){const s=ac.createBufferSource();s.buffer=buf;s.playbackRate.value=rate??(deep?.8:1);const lp=ac.createBiquadFilter();lp.frequency.value=deep?1600:4000;const g=ac.createGain();g.gain.value=1.4;const pn=ac.createStereoPanner();pn.pan.value=pan||0;pn.connect(out);
+s.connect(lp);lp.connect(g);g.connect(pn);if(deep){const dl=ac.createDelay(1),fb=ac.createGain(),wet=ac.createGain();dl.delayTime.value=.34;fb.gain.value=.5;wet.gain.value=.6;g.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(wet);wet.connect(pn)}s.onended=()=>active--;active++;s.start()}
+export async function speak(text,o={}){const deep=o.deep!==false;
+try{if(ready&&window.meSpeak){const raw=meSpeak.speak(text,{rawdata:'arraybuffer',pitch:o.pitch??(deep?12:50),speed:o.speed??(deep?115:150),amplitude:100});if(raw){const buf=await ac.decodeAudioData(raw.slice(0));play(buf,deep,o.rate,o.pan);return}}}catch(e){}
+try{const u=new SpeechSynthesisUtterance(text);u.pitch=deep?0:.8;u.rate=deep?.7:1;u.volume=.9;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
