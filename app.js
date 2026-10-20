@@ -15,7 +15,7 @@ const JP=P,LONG='Captain Josh Stone, Decorated Member of the Bioterrorism Securi
 const JQ=[['First Contact','Captain Josh Stone. BSAA. West Africa branch. Please hold. I am about to say the rest.','First words to Jill Valentine, still in progress','smear'],
 ['Field Report','The Majini are everywhere. I know this because I have been staring directly at them for eleven minutes.','Radio log, Kijuju','glitch'],
 ['Personal Log','Her name is Jill Valentine. I wrote it on my hand so I wouldn’t forget it. I have not forgotten it. It is still on my hand.','Journal, page 1 of 400','zoom']];
-const JS=[{n:'Josh Stone',t:'glitch',h:`<section class="pg"><img class="portrait" id="jt" src="josh.webp" alt="Josh Stone"><h1>Josh Stone</h1><p class="long">${LONG}</p><p class="stamp">BSAA personnel file. Unverified. Probably.</p><p class="by">Click the portrait to return to the living.</p></section>`},
+const JS=[{n:'Josh Stone',t:'glitch',h:`<section class="pg"><img class="portrait" id="jt" src="josh.webp" alt="Josh Stone"><h1>Josh Stone</h1><p class="long">${LONG}</p><p class="stamp">BSAA personnel file. Unverified. Probably.</p><p class="by">Click the portrait to return to the living.</p><button class="jbtn" id="jg">Begin the mission</button></section>`},
 ...JQ.map((c,i)=>({n:c[0],t:c[3],h:`<section class="pg"><div class="num">${R[i]}</div><h2>${c[0]}</h2><blockquote class="q">“${c[1]}”</blockquote><p class="by">${c[2]}</p></section>`})),
 {n:'In Memoriam',t:'fade',h:`<section class="pg"><div class="num">In memoriam</div><h1 class="doug">Doug</h1><p class="sub">Helicopter pilot. Believer in Jill Valentine.</p><p class="memo">Doug was, to put it respectfully, extremely horny for Jill Valentine. So was Josh. Neither of them got her. Doug decided to fix this by looking as cool as possible in front of her. He did not look cool for long. Cause of death: a Doug-seeking missile.</p><p class="q small">He could have just flown away. He did not. Rest in pieces.</p></section>`}];
 new Image().src='josh.webp';
@@ -30,7 +30,7 @@ const A=(el,k,ms)=>RM?Promise.resolve():el.animate(k,{duration:ms,fill:'forwards
 function swap(i){cur=i;st.innerHTML=P[i].h;st.scrollTop=0;history.replaceState(null,'',(P===JS?'#/j':'#/')+i);document.title=(i?P[i].n+' | ':'')+(P===JS?'Josh Stone':'Jamal Ismail');
  document.querySelectorAll('#dots button').forEach((b,j)=>b.classList.toggle('on',j===i));
  const pt=$('#pt'),ex=$('.exp');let n=0;
- const h1=st.querySelector('h1'),jt=$('#jt');if(pt)pt.onclick=()=>flip(true);if(h1&&pt)h1.onclick=()=>{if(++n===7){n=0;$('#cat').hidden=false}};if(jt)jt.onclick=()=>flip(false);
+ const h1=st.querySelector('h1'),jt=$('#jt');if(pt)pt.onclick=()=>flip(true);if(h1&&pt)h1.onclick=()=>{if(++n===7){n=0;$('#cat').hidden=false}};if(jt)jt.onclick=()=>flip(false);const jg=$('#jg');if(jg)jg.onclick=startJosh;
  if(ex)ex.onclick=()=>{$('#warn').hidden=false}}
 async function go(i){if(busy||i<0||i>=P.length||i===cur)return;busy=true;const t=P[i].t;
  if(t==='white'){v.style.background='#fff';await A(v,[{opacity:0},{opacity:1}],900);swap(i);await A(v,[{opacity:1},{opacity:0}],1600)}
@@ -59,11 +59,20 @@ $('#enter').onclick=()=>{a.play().catch(()=>{});$('#gate').style.opacity=0;setTi
 
 window.JI={on:false,a,set:v=>{tv=v}};
 $('#no3').onclick=()=>$('#warn').hidden=true;
-$('#go3').onclick=async()=>{$('#warn').hidden=true;JI.on=true;document.body.classList.remove('still');clearTimeout(tm);JI.set(.1);a.playbackRate=.85;
+$('#go3').onclick=async()=>{$('#warn').hidden=true;if(hasSave()){const c=await menuChoice();if(c==='new')resetSave();if(c==='back')return}JI.on=true;document.body.classList.remove('still');clearTimeout(tm);JI.set(.1);a.playbackRate=.85;
  const back=()=>{JI.mv=1;JI.on=false;a.playbackRate=1;JI.set(.6);act()};
- try{const m=await import('./world.js');m.start({comfort:$('#cm').checked,fx:$('#fx').value,scares:$('#sc').checked,subs:$('#sb').checked,onExit:back})}catch(e){back();console.error(e);alert('The world could not start.\n\nReason: '+(e&&e.message||e)+'\n\nIf this mentions a module, fetch or import, the page is probably opened as a file (double-click) or three.module.min.js / world.js is missing from the repo. If it mentions WebGL, turn on hardware acceleration in your browser.')}};
+ try{const m=await import('./world.js');m.start({comfort:$('#cm').checked,fx:$('#fx').value,scares:$('#sc').checked,subs:$('#sb').checked,diff:$('#df').value,onExit:back})}catch(e){back();console.error(e);alert('The world could not start.\n\nReason: '+(e&&e.message||e)+'\n\nIf this mentions a module, fetch or import, the page is probably opened as a file (double-click) or three.module.min.js / world.js is missing from the repo. If it mentions WebGL, turn on hardware acceleration in your browser.')}};
 
 function setMode(j){P=j?JS:JP;document.body.classList.toggle('josh',j);BG=j?'#0a0d08':'#07080d';FG=j?'#9fb28a':'#ebe6da';SPD=j?3:1;$('#back').hidden=!j;cur=-1;buildDots();go(0)}
 async function flip(to){const im=$('#pt')||$('#jt');if(!im||busy)return;busy=true;const a=(r)=>im.animate([{transform:'perspective(600px) rotateY('+r[0]+'deg)'},{transform:'perspective(600px) rotateY('+r[1]+'deg)'}],{duration:450,fill:'forwards',easing:'ease-in-out'}).finished;
  if(!RM)await a([0,90]);im.src=to?'josh.webp':'jamal.webp';if(!RM)await a([-90,0]);busy=false;setMode(to)}
 $('#back').onclick=()=>setMode(false);
+
+function hasSave(){try{return(+localStorage.getItem('ji_cycle')||1)>1||(+localStorage.getItem('ji_frags')||0)>0}catch(e){return false}}
+function resetSave(){try{['ji_cycle','ji_frags','ji_sched'].forEach(k=>localStorage.removeItem(k))}catch(e){}}
+function menuChoice(){return new Promise(res=>{const m=document.createElement('div');m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.95);display:grid;place-content:center;justify-items:center;gap:.8rem;z-index:10;text-align:center;padding:24px';let c=1,f=0;try{c=+localStorage.getItem('ji_cycle')||1;f=+localStorage.getItem('ji_frags')||0}catch(e){}
+m.innerHTML='<h2 style="margin:0;color:var(--bone)">Saved game found</h2><p style="color:var(--dim);margin:0 0 1rem">Cycle '+c+' of 7 · '+f+' artifacts</p>';
+[['Continue','cont'],['New game','new'],['Back','back']].forEach(([t,v])=>{const b=document.createElement('button');b.className='exp';b.textContent=t;b.onclick=()=>{m.remove();res(v)};m.appendChild(b)});document.body.appendChild(m)})}
+
+async function startJosh(){JI.on=true;document.body.classList.remove('still');clearTimeout(tm);JI.set(0);const back=()=>{JI.mv=1;JI.on=false;JI.set(.6);act()};
+ try{const m=await import('./josh.js');m.start({onExit:back})}catch(e){back();alert('The mission could not start: '+(e&&e.message||e))}}

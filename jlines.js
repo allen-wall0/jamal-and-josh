@@ -1,0 +1,43 @@
+const pk=a=>a[Math.random()*a.length|0],recent=[];
+const S={
+oj:['Bloody Hell','Shit','Dammit','Okay, okay','Right','Listen up','Stay calm','Damn it all','Christ','Fuck'],
+znn:['missile-head','walking warhead','rocket-brain','pointy idiot','fireworks accident','dumb rocket','tin-skull','ballistic bastard','warhead with legs'],
+ins:['stupid','rotten','pointy','overcooked','sorry','hollow-headed','dumb','explosive'],
+dg:['meathead','Captain Long-Title','Rambo','big guy','boss','Captain Josh','Mr. Delta Team'],
+ex:[' Move!',' On the double!',' Stay sharp!',' Eyes up!',' Keep moving!','','','',''],
+dx:[' Seriously.',' Just saying.',' No offense.',' Obviously.',' Allegedly.','','','',''],
+jl:['Jill','Ms. Valentine','Jill Valentine'],
+th:['a pep talk','a raise','a nap','a shield','a sandwich','a better career','a miracle']};
+const T={
+josh_start:['Delta Team, Captain Stone. Doug, stay with me.','Alright Doug, nobody dies today.','Stay close, Doug. We are crossing this street.','{oj}. Quiet street. I hate quiet streets.','Captain Josh Stone, BSAA. Doug, behind me.'],
+josh_fire:['Take this, you {znn}!','Eat lead, {znn}!','Stay down!','{oj}! Contact!','For the BSAA, West Africa branch!','Captain Josh Stone, and you are about to be a crater.','Delta Team does not lose to a {znn}.','On the double, you {ins} {znn}!','Not today, {znn}!','Hold still, you {ins} bastard!'],
+josh_reload:['Reloading! Cover me, Doug!','Dry! Reloading!','One second, one second!','Changing mags, hold on!','{oj}, reloading!','Reloading, do not die, Doug!'],
+josh_hurt:['Argh!','{oj}! That hurt!','I am hit!','Bloody Hell!','Not the face!','Shit! I have had worse. I think.','Ow, ow, ow!','That is going in the report!'],
+josh_lowammo:['I am nearly dry!','Ammo! I need ammo!','Running low, Doug!','Anyone got a spare mag? Anyone?','Last few rounds!'],
+josh_kill:['Got him!','Target down!','That is how it is done!','Boom. Captain Josh Stone.','Another one for the report.','One less {znn}!','Clean kill, nice and far.','That is why you shoot from a distance!'],
+josh_headshot:['Headshot! Rocket brain!','Right through the warhead!','Nice and clean!','Pop goes the {znn}!','Direct hit on the nose cone!'],
+josh_close:['Too close! Too close!','Get back!','Back off, {znn}!','{oj}! Right on top of us!','Do not let it touch Doug!'],
+josh_doughit:['Doug! Doug, are you alright?','Hold on, Doug!','Keep your head down, man!','Doug, stay behind me!','Doug, do not die, I do not have the paperwork!'],
+josh_cover:['Get behind the crate, Doug!','Cover! Take cover!','Use the barrier!','Down, down, down!','Stay behind something solid!'],
+josh_idle:['I was trained for this. Mostly.','Sheva would be proud. Or confused.','Remind me why I got this job.','Eight months training that girl, and she still beats me at cards.','I still say that boat crash was not my fault.','Keep it tight, Doug. We are almost out.','Delta Team never leaves a pilot behind. Even the annoying ones.','Captain Josh Stone, Decorated Member of the BSAA, West Africa Branch. Still got it.','I have a memory card for Chris somewhere. Probably.','If we see {jl}, nobody mentions my hair.','Why do they all want Doug? It is rude.','I wrote my full title on my hand. It does not fit.'],
+josh_wave:['More incoming!','Here they come!','Contact front!','Movement ahead, on the double!','{oj}! Another batch!','Stay behind me, Doug!'],
+josh_clear:['Area clear. For now.','That is the lot. Let us move.','Quiet. Too quiet.','Move up, Doug. Stay close.','Clear. Do not touch anything.'],
+josh_pickup:['Ammo! Finally.','Good, more bullets.','Resupply. Lovely.','Bullets. My favorite.'],
+josh_swap:['Switching!','Shotgun time.','Rifle up.','Back to the pistol.'],
+josh_win:['Level clear. Doug, you alive?','We made it. Do not look so surprised, Doug.','Gate reached. Nobody tell Jill I was sweating.'],
+doug_start:['Alright {dg}, lead the way. Slowly.','Hey, Captain Long-Title, where are we going?','Just so you know, I am not fighting. I am supervising.','I only agreed to this for the tips. And {jl}.'],
+doug_follow:['Hey {dg}, how long is this street?','When this is over, I am buying {jl} a drink. And you are not invited.','Real men fly helicopters, Josh. Real men do not crash boats.','You ever think about how cute {jl} is? Just me? Okay.','Try not to get me killed, {dg}. I have plans for the weekend.','I am a pilot, not a bodyguard. Somebody call HR.','If I die, tell {jl} I looked cool.','Do I look cool? Say I look cool.','I have a speech for {jl}. Seven minutes. Mostly about me.','Think {jl} likes pilots? Asking for a friend.','This is a lot of rockets for one afternoon.','Why does everything here want a piece of me?'],
+doug_panic:['Josh! Josh, do something!','They are running at me! Why at me!?','Shoot it, shoot it!','This is not in my contract!','{dg}! A little help here!','Why does it keep saying my name!?','Mama! I mean, Doug is fine! Doug is fine!','I am too pretty for this!'],
+doug_cover:['Taking cover. Very tactical.','Behind the crate, got it, genius move.','Staying right here. Right here. Sort of.','Call me when it is over.','Doug is hiding. I mean, repositioning.'],
+doug_hit:['Ow! Ow! My hair!','I have been hit! Tell {jl} I was brave!','That stung!','I am too pretty to die!','My helicopter license does not cover this!'],
+doug_thanks:['Okay, okay, you are slightly less useless than I thought.','Nice shot, {dg}. Do not let it go to your head.','Thanks, Josh. I owe you a drink. Not {jl}. A drink.','Wow. You can actually aim.','You saved me. I will mention it at your funeral.'],
+doug_wave:['More?! Seriously?','Oh come on.','I hate this job.','Are those rockets? On heads? Why?','Not again, not again, not again.'],
+doug_clear:['Is it over? Tell me it is over.','I was brave the whole time. Right?','Phew. I need a nap and a compliment.','That was fun. Never again.'],
+doug_missile:['Is that thing tracking me?','It is looking at me. Josh, it is looking at me!','Please be a normal missile, please be a normal missile.','Why is it always me!?'],
+doug_win:['We made it! I was amazing! Write that down.','Told you I would not die. Mostly.','Gate. Finally. Where is {jl}?'],
+zom_lock:['DOUG.','DOUUUG...','Target: DOUG.','SEEKING... DOUG.','DOUG. LOCKED.','Doug... Doug... Doug...','WHERE... IS... DOUG.'],
+zom_charge:['DOUG! DOUG!','I... WANT... DOUG.','ROCKET... TO... DOUG.','IMPACT... IMMINENT.','DOUUUG!'],
+zom_fuse:['Detonating in three... two... one...','FUSE ARMED. DOUG.','EXPLODING. FOR DOUG.','BOOM. DOUG.','ARMED. DOUG.'],
+zom_die:['Doug... wins...','Mission... failed...','...Doug...','Not... Doug...']};
+const SUF=k=>k.startsWith('josh_')&&/fire|kill|wave|close|cover|headshot/.test(k)?pk(S.ex):k.startsWith('doug_')&&/follow|thanks|wave|clear|hit/.test(k)?pk(S.dx):'';
+export function jgen(k,c={}){const a=T[k]||T.josh_idle;let t,i=0;do{t=pk(a)}while(recent.includes(t)&&i++<10);recent.push(t);if(recent.length>20)recent.shift();let o=t.replace(/\{(\w+)\}/g,(m,x)=>c[x]!=null?c[x]:S[x]?pk(S[x]):m);if(Math.random()<.35)o+=SUF(k);return o}
