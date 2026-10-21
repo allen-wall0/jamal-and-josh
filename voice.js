@@ -6,3 +6,9 @@ let done=false;const fin=()=>{if(!done){done=true;active--;res()}};s.onended=fin
 export async function speak(text,o={}){const deep=o.deep!==false;
 try{if(ready&&window.meSpeak){const raw=meSpeak.speak(text,{rawdata:'arraybuffer',pitch:o.pitch??(deep?12:50),speed:o.speed??(deep?115:150),amplitude:100});if(raw){const buf=await ac.decodeAudioData(raw.slice(0));return play(buf,deep,o.rate,o.pan)}}}catch(e){}
 try{return await new Promise(res=>{const u=new SpeechSynthesisUtterance(text);u.pitch=deep?0:.8;u.rate=deep?.7:1;u.volume=.9;u.onend=u.onerror=res;speechSynthesis.cancel();speechSynthesis.speak(u);setTimeout(res,text.length*110+2500)})}catch(e){}}
+let vcs=[];const loadV=()=>{try{vcs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}};
+try{if(typeof speechSynthesis!=='undefined'){loadV();speechSynthesis.onvoiceschanged=loadV}}catch(e){}
+export const nativeOK=()=>{try{return typeof speechSynthesis!=='undefined'&&vcs.length>0}catch(e){return false}};
+const PREF={josh:/David|Daniel|Alex|Mark|Guy|George|UK English Male|Fred|Ryan|Christopher/i,doug:/James|Tom|Oliver|Davis|Aaron|Arthur|Rishi|US English|Eric|Mike|Richard|Brian/i},chosen={};
+function pickV(w){if(chosen[w])return chosen[w];const o=chosen[w==='josh'?'doug':'josh'];let c=vcs.filter(v=>PREF[w].test(v.name)&&v!==o);if(!c.length)c=vcs.filter(v=>v!==o);return chosen[w]=c[0]||vcs[0]||null}
+export function speakNative(text,o){return new Promise(res=>{try{const u=new SpeechSynthesisUtterance(text),v=pickV(o.who);if(v)u.voice=v;u.pitch=o.pitch||1;u.rate=o.rate||1;u.volume=o.vol==null?1:o.vol;u.onend=u.onerror=()=>res();speechSynthesis.speak(u);setTimeout(res,text.length*130+3500)}catch(e){res()}})}
