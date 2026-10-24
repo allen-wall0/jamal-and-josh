@@ -1,8 +1,8 @@
 import*as THREE from './three.module.min.js';
-import*as CANNON from './cannon-es.js';import{gen}from './lines.js';import{initVoice,speak,voiceBusy}from './voice.js';
+import*as CANNON from './cannon-es.js';import{gen}from './lines.js';import{initVoice,speak,voiceBusy,speakNative,nativeOK}from './voice.js';
 const L=(a,b,t)=>a+(b-a)*t,cl=(v,a,b)=>Math.max(a,Math.min(b,v)),rn_=(a,b)=>a+Math.random()*(b-a);
 export function start({comfort,fx:fxOpt,scares:scOpt,subs:subOpt,diff,onExit}){
-const W=()=>innerWidth,H=()=>innerHeight,touch=matchMedia('(pointer:coarse)').matches,SP=comfort?.6:1,DF=({easy:{spd:.7,kt:1.2,kr:.85,hs:2200,tp:1.5,cnt:-1},normal:{spd:.85,kt:.8,kr:.9,hs:1500,tp:1.2,cnt:0},hard:{spd:1.1,kt:.5,kr:1,hs:1000,tp:1,cnt:1}})[diff||'normal']||{spd:.85,kt:.8,kr:.9,hs:1500,tp:1.2,cnt:0};
+const W=()=>innerWidth,H=()=>innerHeight,touch=matchMedia('(pointer:coarse)').matches,SP=comfort?.6:1,DF=({easy:{spd:.7,kt:1.2,kr:.85,hs:2200,tp:1.5,cnt:-1},normal:{spd:.85,kt:.8,kr:.9,hs:1500,tp:1.2,cnt:0},hard:{spd:1.1,kt:.5,kr:1,hs:1000,tp:1,cnt:1}})[diff||'normal']||{spd:.85,kt:.8,kr:.9,hs:1500,tp:1.2,cnt:0};const HARD=diff==='hard',DASHP=.4,DASHMSG=['Jamal got tired of you wandering around and fried your brain.','You wasted Jamal’s time. He wasted your life.','Jamal grew bored. Your thoughts stopped mid-sentence.','Jamal blinked. Your brain was gone.','He did not even wait for you to turn around.'];
 const rd=new THREE.WebGLRenderer({antialias:false});rd.setPixelRatio(touch?1:Math.min(devicePixelRatio,1.5));rd.setSize(W(),H());
 const cv=rd.domElement;cv.style.cssText='position:fixed;inset:0;z-index:7;touch-action:none';document.body.appendChild(cv);document.body.classList.add('inworld');
 const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(70,W()/H(),.1,400);cam.rotation.order='YXZ';
@@ -134,7 +134,7 @@ let ri=0,cr=RL[0],grp=null,swapping=false,base=1.7,jy=0,jv=0,spT=false,dashing=f
 function placeW(){const mo=cr.move,near=mo==='dead'?7:mo==='walk'||mo==='float'?45:22;Ws.forEach((w,i)=>{const a=mo==='dead'?i/Ws.length*6.283:Math.random()*6.283;w.position.set(cam.position.x+Math.sin(a)*near,0,cam.position.z+Math.cos(a)*near);w.position.y=mo==='walk'?cr.h(w.position.x,w.position.z)+2.6:mo==='dead'?2.4:cam.position.y+rn_(-3,3)})}
 function swap(i){clearProps();dyingT=0;Ws.forEach(w=>w.scale.x=Math.abs(w.scale.x));if(grp){sc.remove(grp);grp.traverse(o=>{o.geometry&&o.geometry.dispose();o.material&&o.material.dispose&&o.material.dispose()})}
 ri=i;cr=RL[i];grp=cr.build();sc.add(grp);sc.fog.color.set(cr.fog);sc.background.set(cr.fog);sc.fog.density=cr.d;pl.color.set(cr.lc);hm.intensity=cycle===6?0:cr.amb;
-cam.position.set(0,cr.move==='walk'?cr.h(0,0)+1.7:cr.y0,0);yaw=pit=0;base=cam.position.y;jy=jv=0;fxTint();placeW();Ws.forEach(w=>{const u=w.userData,n=performance.now();u.st=u.off?'gone':'idle';u.gt=1e15;u.a=0;u.mist.material.opacity=0;u.oy=2.6;u.an={x:(w.position.x+cam.position.x)/2,z:(w.position.z+cam.position.z)/2};u.tpAt=n+rn_(6000,12000);u.dashAt=n+20000+rn_(0,30000)/(1+.15*cycle)});dashing=false;realmStart=performance.now();lp.frequency.linearRampToValueAtTime(cr.lp,ac.currentTime+3);say(cr.n,cr.move==='dead'?(killerTxt||deathTxt):(oi===0?ARC[cycle-1]:''));if(cr.move==='locked'){chVis=true;chamberTalk()}if(cr.rev)sub('Left is right. Right is left.','',3500);if(cr.move==='dead'){tone(40,36,.12,10,0);setTimeout(()=>jsay('taunt',cx()),3000);killerTxt=deathTxt=''}
+cam.position.set(0,cr.move==='walk'?cr.h(0,0)+1.7:cr.y0,0);yaw=pit=0;base=cam.position.y;jy=jv=0;fxTint();placeW();Ws.forEach(w=>{const u=w.userData,n=performance.now();dashing=false;u.st=u.off?'gone':'idle';u.gt=1e15;u.a=0;u.mist.material.opacity=0;u.oy=2.6;u.an={x:(w.position.x+cam.position.x)/2,z:(w.position.z+cam.position.z)/2};u.tpAt=n+rn_(6000,12000);u.dashAt=n+20000+rn_(0,30000)/(1+.15*cycle)});dashing=false;realmStart=performance.now();lp.frequency.linearRampToValueAtTime(cr.lp,ac.currentTime+3);say(cr.n,cr.move==='dead'?(killerTxt||deathTxt):(oi===0?ARC[cycle-1]:''));if(cr.move==='locked'){chVis=true;chamberTalk()}if(cr.rev)sub('Left is right. Right is left.','',3500);if(cr.move==='dead'){tone(40,36,.12,10,0);setTimeout(()=>jsay('taunt',cx()),3000);killerTxt=deathTxt=''}
 end=performance.now()+(cr.move==='dead'?15000:cr.move==='locked'?90000:(isArt()?35:20)*(comfort?1.4:1)*1000);sv=cr.vy||0;mkFrag();mkProps();setObj();skyRoll();if(Math.random()<.5)setTimeout(()=>jsayQ('realm'),4000)}
 function goto(i){swapping=true;fd.style.opacity=1;setTimeout(()=>{if(!run)return;swap(i);fd.style.opacity=0;swapping=false},1700)}
 function endCycle(){frags+=gotN;if(chDue&&!chVis)chamberOwed=true;cycle++;save();if(cycle>7){cycle=7;swapping=true;setTimeout(()=>finale(frags>=7?'good':'bad'),800)}else startCycle(true)}
@@ -235,7 +235,7 @@ function dieUpdate(now,dt){if(!dyingT)return;const kk=Math.min(1,(now-dyingT)/45
 
 /* cycle, artifacts, absence, jump scare */
 const shuf=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
-let chamberOwed=false,chVis=false,chDue=false,order=[],oi=0,fragRs=[],fragGot={},gotN=0,artN=1,frag=null,touchT=0,killerTxt='',deathTxt='',absEnd=0,nextTick=0,tAbs=performance.now()+40000,tSc=performance.now()+30000,frags=0,deaths=0,sv=0,kickAt=0,objBase='',shoveT=0,sk=0,ended=false;
+let dashDue=false,dashAt=0,dashKill=false,chamberOwed=false,chVis=false,chDue=false,order=[],oi=0,fragRs=[],fragGot={},gotN=0,artN=1,frag=null,touchT=0,killerTxt='',deathTxt='',absEnd=0,nextTick=0,tAbs=performance.now()+40000,tSc=performance.now()+30000,frags=0,deaths=0,sv=0,kickAt=0,objBase='',shoveT=0,sk=0,ended=false;
 try{frags=+localStorage.getItem('ji_frags')||0;cycle=Math.min(7,+localStorage.getItem('ji_cycle')||1)}catch(e){}
 const save=()=>{try{localStorage.setItem('ji_frags',frags);localStorage.setItem('ji_cycle',cycle)}catch(e){}};
 const wantJ=()=>Math.max(1,Math.min(8,cycle+DF.cnt)),isArt=()=>fragRs.includes(ri)&&!fragGot[ri];
@@ -249,7 +249,7 @@ const mkSched=()=>{const b=shuf(PL),d=b.concat(b,b);let i=0;return[5,5,5,5,5,5,6
 let sched=null;try{sched=JSON.parse(localStorage.getItem('ji_sched'))}catch(e){}
 if(!(sched&&sched.length===7&&sched.every(a=>Array.isArray(a)&&a.every(x=>PL.includes(x)))))sched=mkSched();
 try{localStorage.setItem('ji_sched',JSON.stringify(sched))}catch(e){}
-function startCycle(fade){const base=shuf(sched[cycle-1].slice());order=base.slice();oi=0;gotN=0;fragGot={};artN=Math.random()<.5?1:2;fragRs=shuf(base).slice(0,artN);
+function startCycle(fade){dashDue=HARD&&Math.random()<DASHP;dashAt=performance.now()+rn_(20000,80000);dashKill=false;dashing=false;wifePlan();const base=shuf(sched[cycle-1].slice());order=base.slice();oi=0;gotN=0;fragGot={};artN=Math.random()<.5?1:2;fragRs=shuf(base).slice(0,artN);
 chVis=false;chDue=cycle===2||cycle===3||chamberOwed;if(chDue||(cycle===6&&Math.random()<.4)){order.splice(1+(Math.random()*2|0),0,CHI);chamberOwed=false}
 while(Ws.length<wantJ())addW();Ws.forEach((w,i)=>{const t=i<2?'n':['whisper','giant','mirror'][(i-2)%3],ok=t==='whisper'?cycle>=3:t==='giant'?cycle>=4:t==='mirror'?cycle>=5:true;w.userData.type=ok?t:'n';w.userData.off=i>=wantJ();w.scale.setScalar(w.userData.type==='giant'?3:1)});
 fade?goto(order[0]):swap(order[0])}
@@ -283,13 +283,13 @@ const skyFace=new THREE.Mesh(new THREE.PlaneGeometry(240,240).rotateX(Math.PI/2)
 const VO=[[8,105,.7,-1],[14,115,.78,1],[22,125,.85,0],[30,140,.9,0],[40,110,.75,-.5],[50,150,1,.5],[18,100,.72,.3],[26,120,.82,-.3],[36,135,.88,.6],[44,108,.76,-.6]],ROM=['I','II','III','IV','V','VI','VII','VIII','IX','X'];
 const cx=()=>({cycle,deaths,frags:frags+gotN,realm:cr.n,dd:deaths?'died '+deaths+(deaths>1?' times':' time'):'not even died yet, a miracle of cowardice'});
 function talk(){if(performance.now()<vlock)return;let best=null,bd=1e9;for(const w of Ws){if(w.userData.st==='gone')continue;const d=w.position.distanceTo(cam.position);if(d<bd){bd=d;best=w}}if(!best)return;const dx=best.position.x-cam.position.x,dz=best.position.z-cam.position.z,l=Math.hypot(dx,dz)||1;
-const vv=VO[best.userData.vi%VO.length];jsay('say',cx(),{deep:true,who:'Jamal '+ROM[best.userData.vi%10],pitch:vv[0],speed:vv[1],rate:best.userData.type==='giant'?.6:vv[2],pan:cl((dx*Math.cos(yaw)-dz*Math.sin(yaw))/l,-1,1)})}
+const vv=VO[best.userData.vi%VO.length];jsay(Math.random()<.4?'story':'say',cx(),{deep:true,who:'Jamal '+ROM[best.userData.vi%10],pitch:vv[0],speed:vv[1],rate:best.userData.type==='giant'?.6:vv[2],pan:cl((dx*Math.cos(yaw)-dz*Math.sin(yaw))/l,-1,1)})}
 async function chamberTalk(){const ctx=cx();vlock=1e18;for(let i=0;i<6;i++){if(cr.move!=='locked'){vlock=0;return}spkI=i;const t=gen('chamber',ctx),v=VO[i];sub(t,'Jamal '+ROM[i],9000);await Promise.all([speak(t,{deep:true,pitch:v[0],speed:v[1],rate:v[2],pan:v[3]}),new Promise(r=>setTimeout(r,Math.max(2500,t.length*75)))]);await new Promise(r=>setTimeout(r,350))}vlock=performance.now()+1500;if(cr.move==='locked'){spkI=-1;end=performance.now()+1500}}
 function staticBurst(){if(scOpt===false||comfort)return;const d=document.createElement('div');d.style.cssText='position:absolute;inset:0;pointer-events:none;background-image:'+NZ+';opacity:.5';ui.appendChild(d);ns(2500,.5,.22,2,0);let n=0;const iv=setInterval(()=>{n++;d.style.opacity=.2+Math.random()*.4;cv.style.filter=n%2?'brightness(.55)':'none';if(n>6){clearInterval(iv);d.remove();cv.style.filter='none'}},330)}
 function skyRoll(){skyOn=cycle>=4&&cr.move!=='dead'&&cr.move!=='locked'&&Math.random()<.35;skyFace.visible=skyOn;tSky=performance.now()+3000;
 if(decoy){grp.remove(decoy);decoy=null}
 if(cycle>=5&&cr.move==='walk'&&!frag&&Math.random()<.6){const g=new THREE.Group();g.add(new THREE.Mesh(new THREE.OctahedronGeometry(.6),new THREE.MeshBasicMaterial({color:0xffd070,fog:false})),new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,160,8,1,true),new THREE.MeshBasicMaterial({color:0xffc060,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false,fog:false})));const a=rn_(0,6.28),r=rn_(25,45),x=Math.sin(a)*r,z=Math.cos(a)*r;g.position.set(x,cr.h(x,z)+1.6,z);grp.add(g);decoy=g}}
-function presence(now,dt,m){if(m!=='locked')spkI=-1;
+function presence(now,dt,m){wifeTick(now,m);if(m!=='locked')spkI=-1;
 if(skyOn){skyFace.position.set(cam.position.x,cam.position.y+170,cam.position.z);skyFace.material.opacity=L(skyFace.material.opacity,.55+.1*Math.sin(now/900),.05);if(now>tSky&&m!=='dead'){tSky=now+rn_(10000,16000);jsay('sky',cx(),{deep:true,rate:.62,pan:0})}}else skyFace.material.opacity=0;
 if(m!=='locked'&&m!=='dead'&&!swapping){if(now>tSpk&&now>=absEnd){tSpk=now+(AU.c>.02?rn_(12000,20000)*(cycle===7?.85:1)/AU.c:1e9);talk()}if(now>tSt){tSt=now+rn_(25000,50000);staticBurst()}}
 if(decoy&&decoy.position.distanceTo(cam.position)<7){grp.remove(decoy);decoy=null;jsay('decoy',cx(),{deep:true});staticBurst()}}
@@ -322,7 +322,7 @@ figs.forEach((f,i)=>{const k=cl((el-17-i*.6)/.8,0,1);f.rotation.z=k*1.5;f.positi
 cam.position.y=1.7+cl(el/14,0,1)*12;cam.position.z=-cl((el-26)/10,0,1)*50;fovAdd=cl((el-26)/10,0,1)*30;const r=cl((el-28)/8,0,1);sc.fog.color.setRGB(.02+.3*r,0,0);sc.background.copy(sc.fog.color)};return g}};
 scene(E);at(5000,()=>{fd.style.transition='opacity 2s';fd.style.opacity=0;vox(BADL[0])});at(13000,()=>vox(BADL[1]));at(16000,staticBurst);at(19000,()=>{hands(false);vox(BADL[2])});at(24000,()=>vox(BADL[3]));
 at(28000,()=>{roar();staticBurst();vox(BADL[4],{deep:true,rate:.6,pitch:6,speed:100,who:'JAMAL'})});at(33000,()=>vox(BADL[5],{deep:true,rate:.6,pitch:6,speed:100,who:'JAMAL'}));
-at(37000,()=>{fd.style.transition='opacity 3s';fd.style.background='#300';fd.style.opacity=1});at(42000,()=>ending('bad'))}
+at(35800,()=>{vlock=0;wsay('I love you.')});at(37000,()=>{fd.style.transition='opacity 3s';fd.style.background='#300';fd.style.opacity=1});at(42000,()=>ending('bad'))}
 function finGood(){const cols=PL.map(i=>RL[i].fog),E={n:'The Ascension',fog:0x0a0a12,d:.006,lp:600,lc:0xffe8c0,amb:.6,move:'locked',vy:0,y0:1.7,b:0,
 build(){const g=new THREE.Group(),cap=c=>new THREE.Mesh(new THREE.CapsuleGeometry(.35,1.1,4,8),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:0}));g.add(new THREE.Mesh(new THREE.CircleGeometry(400,48).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:0x101018})));
 const orbs=cols.map((c,i)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(2.2,16,12),new THREE.MeshBasicMaterial({color:new THREE.Color(c).offsetHSL(0,.3,.35),fog:false})),a=i/cols.length*6.283;o.position.set(Math.sin(a)*16,5+Math.sin(i)*2,-Math.cos(a)*16);g.add(o);return o});
@@ -332,7 +332,7 @@ orbs.forEach((o,i)=>{const k=cl((el-4-i*1.6)/2,0,1);o.scale.setScalar(1-k*.95)})
 cam.position.y=1.7+sm(cl((el-46)/16,0,1))*300;me.material.opacity=cl((el-50)/4,0,1);const w=cl((el-48)/12,0,1);sc.fog.color.setRGB(.04+.9*w,.04+.8*w,.07+.7*w);sc.background.copy(sc.fog.color)};return g}};
 scene(E);[196,247,294].forEach((f,i)=>tone(f,f,.03,20,0,i*.5));at(2000,()=>{fd.style.transition='opacity 3s';fd.style.opacity=0});
 [5,9,13,17,24,29,34,41,45,50,56].forEach((s,j)=>at(s*1000,()=>{if(j===7)hands(true);const L=GOODL[j];vox(L[0],{who:L[1],deep:j>6,pitch:Math.max(8,50-j*4),speed:150-j*4,rate:j>6?.8:1})}));
-at(30000,()=>[196,247,294].forEach((f,i)=>tone(f,f,.03,20,0,i*.5)));at(66000,()=>{fd.style.background='#fff';fd.style.transition='opacity 3s';fd.style.opacity=1});at(71000,()=>ending('good'))}
+at(30000,()=>[196,247,294].forEach((f,i)=>tone(f,f,.03,20,0,i*.5)));at(53000,()=>{vlock=0;wsay('I love you.')});at(66000,()=>{fd.style.background='#fff';fd.style.transition='opacity 3s';fd.style.opacity=1});at(71000,()=>ending('good'))}
 
 /* audio settings */
 let AU={m:1,mu:1,v:1,e:1,c:.7};try{Object.assign(AU,JSON.parse(localStorage.getItem('ji_audio2')||'{}'))}catch(e){}
@@ -346,6 +346,19 @@ const ab=document.createElement('button');ab.textContent='Audio';ab.style.cssTex
 function togglePanel(){ap.style.display=ap.style.display==='none'?'block':'none';if(ap.style.display==='block')document.exitPointerLock&&document.exitPointerLock()}ab.onclick=togglePanel;ui.appendChild(ab);
 const nbt=document.createElement('button');nbt.textContent='New game';nbt.style.cssText='position:absolute;top:14px;right:176px;pointer-events:auto;background:none;border:1px solid #ebe6da;color:inherit;font:inherit;padding:.4em 1em;cursor:pointer';
 nbt.onclick=()=>{if(fin||ended)return;document.exitPointerLock&&document.exitPointerLock();if(confirm('Start a new game from cycle 1? Your progress will be lost.')){try{['ji_frags','ji_cycle','ji_sched'].forEach(k=>localStorage.removeItem(k))}catch(e){}resetRun(1,0)}};ui.appendChild(nbt);
+/* the wife: a voice only the Outsider hears */
+const WL=[['Love, it is me. If you can hear this, do not be afraid. I read your notes. You found something under the world. You called it Jamal.','You said you could stop it. You said it only needed an invitation, seven pieces, gathered. I will wait for you. I always do.'],
+['The house is quiet without you. I keep your side of the bed warm. The lights flicker every time you collect another piece.','I told the neighbors you were away on work. They looked at me strangely. They said they had never seen you.'],
+['People have stopped talking in the streets. They only stare at the sky. I think they are listening for something.','You always said this would save us. So why does it feel like we are being counted?'],
+['Last night the sky had a face. The children saw it too. They did not scream. They waved.','Every piece you find, the face gets clearer. I am starting to think you are not the one who is hunting.'],
+['I read your notes again. Slowly this time. The invitation is not a seal, love. It is a meal.','Every piece you bring him makes him stronger. Please. Stop collecting them.'],
+['I can hear him say your name in my sleep. He thanks you. He thanks you every night.','Put them down. Whatever is left of you, put them down and come home.'],
+['If this is the last time you hear me, listen. I never stopped believing you were trying to save us.','You were brave. You were so brave. And he used it.','Whatever happens next, remember the kitchen. Remember the singing. Remember me.']];
+let wq=[];
+function wifePlan(){const a=WL[Math.min(7,cycle)-1]||[];wq=a.map((t,i)=>({t,at:performance.now()+(i===0?7000:rn_(25000,55000)*i)}))}
+const wifeSpeak=t=>Promise.all([nativeOK()?speakNative(t,{who:'wife',pitch:1.02,rate:.9,vol:AU.v*AU.m}):speak(t,{deep:false,pitch:78,speed:150,rate:1}),new Promise(r=>setTimeout(r,Math.max(2200,t.length*75)))]);
+function wsay(t){vlock=1e9;sub(t,'Wife',Math.max(4500,t.length*85+1500));wifeSpeak(t).then(()=>{vlock=performance.now()+1800})}
+function wifeTick(now,m){if(!wq.length||m==='dead'||m==='locked'||swapping||fin)return;const q=wq[0];if(now<q.at||now<vlock)return;wq.shift();wsay(q.t)}
 initVoice(ac,VB);startCycle();
 
 function loop(now){if(!run)return;raf=requestAnimationFrame(loop);const dt=Math.min((now-last)/1000,.1);last=now;T+=dt;const m=cr.move;
@@ -361,6 +374,7 @@ const hd=Math.hypot(cam.position.x,cam.position.z);if(cr.b&&hd>cr.b){cam.positio
 pl.position.copy(cam.position);cr.u&&cr.u(dt,T);physUpdate(now,dt);
 if(m!=='dead'&&!swapping&&now>tAbs&&now>=absEnd){absEnd=now+13000;tAbs=now+rn_(70000,120000);const t=ac.currentTime;mg.gain.cancelScheduledValues(t);mg.gain.setTargetAtTime(.1,t,.4);mg.gain.setTargetAtTime(.7,t+12,.8);setTimeout(()=>jsay('absence',cx()),2500);Ws.forEach(w=>w.userData.tpAt=absEnd+500);fogUntil=absEnd}
 if(scOpt!==false&&!comfort&&m!=='dead'&&!swapping&&now>tSc){tSc=now+rn_(45000,90000);scare()}
+if(HARD&&dashDue&&now>dashAt&&!dashing&&m!=='dead'&&m!=='locked'&&!swapping&&now>=absEnd){const cs=Ws.filter(w=>w.userData.st==='idle'&&!w.userData.off&&w.userData.type!=='mirror');if(cs.length){const w=cs[Math.random()*cs.length|0],u=w.userData;u.st='warn';u.wt=now+1300;dashing=true;dashDue=false;tone(48,34,.1,1.5,0)}}
 let dmin=999,pan=0,killed=false,near=false;const abs=now<absEnd;
 for(const w of Ws){const u=w.userData,to=w.position.clone().sub(cam.position),d=to.length()||1,tn=to.divideScalar(d),seen=fv.dot(tn)>.55,pn=cl(tn.x*Math.cos(yaw)-tn.z*Math.sin(yaw),-1,1);
 if((abs||m==='locked')&&m!=='dead'){u.tgt=0;u.a+=(0-u.a)*Math.min(1,dt*3);w.material.opacity=u.a;continue}
@@ -376,7 +390,7 @@ else{u.tgt=.75;u.oy+=(2.6-u.oy)*Math.min(1,dt*2);if(seen||now-u.t0>3500){u.st='i
 u.a+=(u.tgt-u.a)*Math.min(1,dt*(u.st==='out'?5:1.5));w.material.opacity=u.a;
 if(m!=='dead'){w.position.y+=cr.vy*dt;if(m==='walk')w.position.y=cr.h(w.position.x,w.position.z)+u.oy+Math.sin(now/900)*.08}
 w.lookAt(cam.position);if(d<dmin&&u.st!=='gone'){dmin=d;pan=pn}
-if(m!=='dead'&&!swapping&&u.a>.05&&d<(u.type==='giant'?4.5:2.2)*DF.kr){near=true;touchT+=dt;if(touchT>DF.kt){killerTxt='Jamal #'+(Ws.indexOf(w)+1)+' got you '+(tn.y>.5?'from above':tn.y<-.5?'from below':fv.dot(tn)>.3?'from the front':fv.dot(tn)<-.3?'from behind':'from the side');killed=true;break}}}
+if(m!=='dead'&&!swapping&&u.a>.05&&d<(u.type==='giant'?4.5:2.2)*DF.kr){near=true;touchT+=dt;if(u.st==='dash'&&d<2.1){touchT=99;dashKill=true}if(touchT>DF.kt){killerTxt=dashKill?DASHMSG[Math.random()*DASHMSG.length|0]:'Jamal #'+(Ws.indexOf(w)+1)+' got you '+(tn.y>.5?'from above':tn.y<-.5?'from below':fv.dot(tn)>.3?'from the front':fv.dot(tn)<-.3?'from behind':'from the side');killed=true;break}}}
 if(!near)touchT=Math.max(0,touchT-dt*2);
 if(killed)kill();
 fragUpdate(now,dt);presence(now,dt,m);fxUpdate(now,dt,m,dmin);camUpdate(now,dt);dieUpdate(now,dt);const prox=m==='dead'?.5:cl(1-(dmin-5)/40,0,1);

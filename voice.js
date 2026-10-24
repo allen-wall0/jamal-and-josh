@@ -9,6 +9,10 @@ try{return await new Promise(res=>{const u=new SpeechSynthesisUtterance(text);u.
 let vcs=[];const loadV=()=>{try{vcs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}};
 try{if(typeof speechSynthesis!=='undefined'){loadV();speechSynthesis.onvoiceschanged=loadV}}catch(e){}
 export const nativeOK=()=>{try{return typeof speechSynthesis!=='undefined'&&vcs.length>0}catch(e){return false}};
-const PREF={josh:/David|Daniel|Alex|Mark|Guy|George|UK English Male|Fred|Ryan|Christopher/i,doug:/James|Tom|Oliver|Davis|Aaron|Arthur|Rishi|US English|Eric|Mike|Richard|Brian/i},chosen={};
-function pickV(w){if(chosen[w])return chosen[w];const o=chosen[w==='josh'?'doug':'josh'];let c=vcs.filter(v=>PREF[w].test(v.name)&&v!==o);if(!c.length)c=vcs.filter(v=>v!==o);return chosen[w]=c[0]||vcs[0]||null}
+const FEM=/Zira|Hazel|Susan|Samantha|Karen|Victoria|Tessa|Moira|Fiona|Veena|Ezinne|Leah|Asilia|Imani|Natasha|Olivia|Libby|Sonia|Mia|Clara|Emily|Hayley|Heera|Linda|Catherine|Female|Zoe|Allison|Ava|Jenny|Aria|Michelle|Ana|Joanna|Kendra|Kimberly|Salli|Ivy|Nicole|Emma|Amy|Raveena|Aditi|Siri|Kate|Serena|Stephanie|Jessa|Eloise|Sara|Ruth|Sandy|Shelley|Flo|Grandma|Mary|Sally|Nova|Fiona/i,AF=/^en[-_](NG|KE|ZA|GH|TZ|UG|ZM|ZW|NA|ET)/i,chosen={};
+function pool(w){const mal=vcs.filter(v=>!FEM.test(v.name)),fem=vcs.filter(v=>FEM.test(v.name));return w==='wife'?[...fem.filter(v=>AF.test(v.lang)),...fem,...vcs]:[...mal.filter(v=>AF.test(v.lang)),...mal,...vcs]}
+function pickV(w){if(chosen[w])return chosen[w];try{const n=localStorage.getItem('ji_v'+w);const f=n&&vcs.find(v=>v.name===n);if(f)return chosen[w]=f}catch(e){}const o=chosen[w==='josh'?'doug':w==='doug'?'josh':'none'],p=pool(w).filter(v=>v!==o);return chosen[w]=p[0]||pool(w)[0]||null}
+export const listVoices=()=>vcs.map(v=>({name:v.name,lang:v.lang}));
+export function setVoice(w,name){chosen[w]=vcs.find(v=>v.name===name)||null;try{localStorage.setItem('ji_v'+w,name)}catch(e){}}
+export const chosenVoice=w=>{const v=pickV(w);return v?v.name:''};
 export function speakNative(text,o){return new Promise(res=>{try{const u=new SpeechSynthesisUtterance(text),v=pickV(o.who);if(v)u.voice=v;u.pitch=o.pitch||1;u.rate=o.rate||1;u.volume=o.vol==null?1:o.vol;u.onend=u.onerror=()=>res();speechSynthesis.speak(u);setTimeout(res,text.length*130+3500)}catch(e){res()}})}
