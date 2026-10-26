@@ -15,7 +15,7 @@ const JP=P,LONG='Captain Josh Stone, Decorated Member of the Bioterrorism Securi
 const JQ=[['First Contact','Captain Josh Stone. BSAA. West Africa branch. Please hold. I am about to say the rest.','First words to Jill Valentine, still in progress','smear'],
 ['Field Report','The Majini are everywhere. I know this because I have been staring directly at them for eleven minutes.','Radio log, Kijuju','glitch'],
 ['Personal Log','Her name is Jill Valentine. I wrote it on my hand so I wouldn’t forget it. I have not forgotten it. It is still on my hand.','Journal, page 1 of 400','zoom']];
-const JS=[{n:'Josh Stone',t:'glitch',h:`<section class="pg"><img class="portrait" id="jt" src="josh.webp" alt="Josh Stone"><h1>Josh Stone</h1><p class="long">${LONG}</p><p class="stamp">BSAA personnel file. Unverified. Probably.</p><p class="by">Click the portrait to return to the living.</p><button class="jbtn" id="jg">Begin the mission</button></section>`},
+const JS=[{n:'Josh Stone',t:'glitch',h:`<section class="pg"><img class="portrait" id="jt" src="josh.webp" alt="Josh Stone"><h1>Josh Stone</h1><p class="long">${LONG}</p><p class="stamp">BSAA personnel file. Unverified. Probably.</p><p class="by">Click the portrait to return to the living.</p><button class="jbtn" id="jg">Begin the mission</button> <button class="jbtn" id="jg5" hidden>Skip to Level 5</button></section>`},
 ...JQ.map((c,i)=>({n:c[0],t:c[3],h:`<section class="pg"><div class="num">${R[i]}</div><h2>${c[0]}</h2><blockquote class="q">“${c[1]}”</blockquote><p class="by">${c[2]}</p></section>`})),
 {n:'In Memoriam',t:'fade',h:`<section class="pg"><div class="num">In memoriam</div><h1 class="doug">Doug</h1><p class="sub">Helicopter pilot. Believer in Jill Valentine.</p><p class="memo">Doug was, to put it respectfully, extremely horny for Jill Valentine. So was Josh. Neither of them got her. Doug decided to fix this by looking as cool as possible in front of her. He did not look cool for long. Cause of death: a Doug-seeking missile.</p><p class="q small">He could have just flown away. He did not. Rest in pieces.</p></section>`}];
 new Image().src='josh.webp';
@@ -30,7 +30,7 @@ const A=(el,k,ms)=>RM?Promise.resolve():el.animate(k,{duration:ms,fill:'forwards
 function swap(i){cur=i;st.innerHTML=P[i].h;st.scrollTop=0;history.replaceState(null,'',(P===JS?'#/j':'#/')+i);document.title=(i?P[i].n+' | ':'')+(P===JS?'Josh Stone':'Jamal Ismail');
  document.querySelectorAll('#dots button').forEach((b,j)=>b.classList.toggle('on',j===i));
  const pt=$('#pt'),ex=$('.exp');let n=0;
- const h1=st.querySelector('h1'),jt=$('#jt');if(pt)pt.onclick=()=>flip(true);if(h1&&pt)h1.onclick=()=>{if(++n===7){n=0;$('#cat').hidden=false}};if(jt)jt.onclick=()=>flip(false);const jg=$('#jg');if(jg)jg.onclick=startJosh;
+ const h1=st.querySelector('h1'),jt=$('#jt');if(pt)pt.onclick=()=>flip(true);if(h1&&pt)h1.onclick=()=>{if(++n===7){n=0;$('#cat').hidden=false}};if(jt)jt.onclick=()=>flip(false);const jg=$('#jg');if(jg)jg.onclick=()=>startJosh(1);const jg5=$('#jg5');if(jg5){try{if(localStorage.getItem('ji_josh_l5')==='1')jg5.hidden=false}catch(e){}jg5.onclick=()=>startJosh(5)}
  if(ex)ex.onclick=()=>{$('#warn').hidden=false}}
 async function go(i){if(busy||i<0||i>=P.length||i===cur)return;busy=true;const t=P[i].t;
  if(t==='white'){v.style.background='#fff';await A(v,[{opacity:0},{opacity:1}],900);swap(i);await A(v,[{opacity:1},{opacity:0}],1600)}
@@ -74,5 +74,5 @@ function menuChoice(){return new Promise(res=>{const m=document.createElement('d
 m.innerHTML='<h2 style="margin:0;color:var(--bone)">Saved game found</h2><p style="color:var(--dim);margin:0 0 1rem">Cycle '+c+' of 7 · '+f+' artifacts</p>';
 [['Continue','cont'],['New game','new'],['Back','back']].forEach(([t,v])=>{const b=document.createElement('button');b.className='exp';b.textContent=t;b.onclick=()=>{m.remove();res(v)};m.appendChild(b)});document.body.appendChild(m)})}
 
-async function startJosh(){JI.on=true;document.body.classList.remove('still');clearTimeout(tm);JI.set(0);const back=()=>{JI.mv=1;JI.on=false;JI.set(.6);act()};
- try{const m=await import('./josh.js');m.start({onExit:back})}catch(e){back();alert('The mission could not start: '+(e&&e.message||e))}}
+async function startJosh(lv){JI.on=true;document.body.classList.remove('still');clearTimeout(tm);JI.set(0);const back=()=>{JI.mv=1;JI.on=false;JI.set(.6);act()};
+ try{const m=await import('./josh.js');m.start({onExit:back,startLevel:lv||1})}catch(e){back();alert('The mission could not start: '+(e&&e.message||e))}}

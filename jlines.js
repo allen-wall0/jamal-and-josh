@@ -125,6 +125,13 @@ const BAN=[
 const STORY=[];
 const SUF=k=>k.startsWith('josh_')&&/fire|kill|wave|close|cover|headshot|many/.test(k)?pk(S.ex):k.startsWith('doug_')&&/follow|thanks|wave|clear|hit|roast|random/.test(k)?pk(S.dx):'';
 const fill=(t,c)=>t.replace(/\{(\w+)\}/g,(m,x)=>c[x]!=null?c[x]:S[x]?pk(S[x]):m);
+
+T.josh_start.push('No helicopter. No backup. Doug, we do this on foot.','We heard the explosion. Jill is out there. Move, Doug, move!','Doug, stay behind me. You are no use in a fight, but you are very good at being behind me.','First priority: Jill. Second priority: not dying. Third priority: Doug.');
+T.doug_start.push('Oga Captain, my helicopter is parked far, far away. Which means I am officially useless today.','If Jill is in danger, I am going to be brave. I am going to be brave behind you.','I have no helicopter, no weapon, and no plan. But I have a lot of enthusiasm.','Josh, if you get hurt, I am going to scream. I just want you to know that now.');
+T.josh_jill.push('Jill is under attack too, I can feel it. Move!','If those things get to Jill first, I will never forgive myself.','We reach Jill. We protect Jill. And Doug, you protect yourself.');
+T.doug_jill.push('I will protect Jill. From behind Josh. But I will protect her.','Think of it, Josh. Jill, in danger, and us, two heroes. It writes itself.');
+T.doug_heli.push('My helicopter is parked somewhere beautiful and safe. I should have stayed with it.','If I had my helicopter, I would be rescuing Jill from the sky. Instead I am rescuing her from a crate.');
+T.josh_idle.push('We go on foot, we keep quiet, and we get to Jill. That is the whole plan.','No helicopter means no rescue. It is just us, Doug. Just us and the street.');
 export function jgen(k,c={}){const a=T[k]||T.josh_idle;let t,i=0;do{t=pk(a)}while(recent.includes(t)&&i++<12);recent.push(t);if(recent.length>40)recent.shift();let o=fill(t,c);if(Math.random()<.3)o+=SUF(k);return o}
 export function jbanter(c={}){const b=pk(BAN);return{first:b[0]==='j'?'josh':'doug',second:b[0]==='j'?'doug':'josh',a:fill(b[1],c),b:fill(b[2],c)}}
 export const kinds=()=>Object.keys(T);
