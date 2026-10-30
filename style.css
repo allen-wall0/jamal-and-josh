@@ -42,3 +42,5 @@ body.josh{--ink:#0a0d08;--bone:#d8e0cc;--gold:#b3262a;--dim:#7f8a74;background:v
 #warn select{background:#000;color:var(--bone);border:1px solid var(--dim);font:inherit;padding:.2em .4em}
 body.inworld #stage,body.inworld #nav,body.inworld #sky,body.inworld #hush{visibility:hidden}
 .jbtn{background:none;border:1px solid var(--bone);color:var(--bone);font:inherit;padding:.7em 1.6em;cursor:pointer;margin-top:1rem;transition:background .3s,color .3s}.jbtn:hover{background:var(--bone);color:var(--ink)}
+
+.sub.jx{font-size:1rem;line-height:1.55;max-width:34rem;margin-left:auto;margin-right:auto}
