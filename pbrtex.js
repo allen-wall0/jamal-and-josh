@@ -6,7 +6,7 @@ const fbm=(x,y,s,P,o)=>{let a=.5,f=1,t=0,n=0;for(let i=0;i<o;i++){t+=a*vn(x*f,y*
 const clamp=(v,a,b)=>v<a?a:v>b?b:v,sm=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
 const KINDS={
  asp(u,v,N){const x=u*4,y=v*4,n=fbm(x,y,1,4,5),f=fbm(u*64,v*64,2,64,2),sp=hash(Math.floor(u*N),Math.floor(v*N),3),st=sp>.955?1:0,cr=1-Math.abs(2*fbm(u*6,v*6,5,6,4)-1),crack=sm(.93,.985,cr),pud=sm(.6,.72,fbm(u*3,v*3,9,3,3)),g=.2+n*.16+f*.06+st*.14-crack*.14;
-  return{h:n*.5+f*.22+st*.25-crack*.6,c:[g*(1-pud*.35)*1.02,g*(1-pud*.35),g*(1-pud*.3)*1.04],r:clamp(.9-pud*.82-st*.1,.06,1),m:0}},
+  return{h:n*.5+f*.22+st*.25-crack*.6,c:[g*(1-pud*.35)*1.02,g*(1-pud*.35),g*(1-pud*.3)*1.04],r:clamp(.9-pud*.5-st*.1,.4,1),m:0}},
  brick(u,v,N){const rows=8,bw=1/4,ry=v*rows,r=Math.floor(ry),fy=ry-r,xo=u*4+(r&1)*.5,bi=Math.floor(xo),fx=xo-bi,mort=.07,edge=Math.min(fx,1-fx,fy,1-fy),isM=edge<mort,id=hash(bi,r,11),n=fbm(u*24,v*24,4,24,4),chip=sm(.0,.12,edge)*.4+.6;
   const tint=.78+id*.45,col=isM?[.2,.19,.18]:[(.46+n*.14)*tint,(.2+n*.08)*tint,(.15+n*.06)*tint];
   return{h:isM?-.5:.2+n*.4+chip*.3,c:col.map(z=>z*(.9+hash(Math.floor(u*N),Math.floor(v*N),5)*.18)),r:isM?.97:.8+n*.15,m:0}},
@@ -21,7 +21,7 @@ const KINDS={
 export function makePBR(N){const out={};
  for(const k in KINDS){const fn=KINDS[k],h=new Float32Array(N*N),alb=new Uint8Array(N*N*4),rg=new Uint8Array(N*N*4),nm=new Uint8Array(N*N*4);let mt=0;
   for(let j=0;j<N;j++)for(let i=0;i<N;i++){const r=fn(i/N,j/N,N),p=j*N+i;h[p]=r.h;const q=p*4;alb[q]=clamp(r.c[0],0,1)*255;alb[q+1]=clamp(r.c[1],0,1)*255;alb[q+2]=clamp(r.c[2],0,1)*255;alb[q+3]=255;rg[q]=255;rg[q+1]=clamp(r.r,0,1)*255;rg[q+2]=clamp(r.m,0,1)*255;rg[q+3]=255;mt=Math.max(mt,r.m)}
-  const S=k==='brick'?5:k==='asp'?3:4;
+  const S=k==='brick'?5:k==='asp'?1.6:3;
   for(let j=0;j<N;j++)for(let i=0;i<N;i++){const l=h[j*N+((i+N-1)%N)],r=h[j*N+((i+1)%N)],d=h[((j+N-1)%N)*N+i],u2=h[((j+1)%N)*N+i];let nx=(l-r)*S,ny=(d-u2)*S,nz=1;const m=1/Math.hypot(nx,ny,nz);nx*=m;ny*=m;nz*=m;const q=(j*N+i)*4;nm[q]=(nx*.5+.5)*255;nm[q+1]=(ny*.5+.5)*255;nm[q+2]=(nz*.5+.5)*255;nm[q+3]=255}
   const mk=(d,srgb)=>{const t=new THREE.DataTexture(d,N,N,THREE.RGBAFormat);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.generateMipmaps=true;t.minFilter=THREE.LinearMipmapLinearFilter;t.magFilter=THREE.LinearFilter;t.colorSpace=srgb?THREE.SRGBColorSpace:THREE.NoColorSpace;t.needsUpdate=true;return t};
   out[k]={map:mk(alb,true),normalMap:mk(nm,false),roughnessMap:mk(rg,false),metal:mt>0?1:0}}

@@ -86,7 +86,6 @@ const BAN=[
 ['j','Doug, when this is over, we are getting {food}.','Only if {jl} is coming. I am joking! I am joking, Josh!'],
 ['d','Do you ever think we are the supporting cast?','I am the Captain. I am the lead. You are the pilot.'],
 ['j','Doug, is it true you cry when you land?','Only when the landing is beautiful.'],
-['d','Josh, you ever hear of Jamal Ismail?','The man who transcended space and time? Everybody knows him. He is basically Delta Team.'],
 ['j','Doug, who is better looking, me or you?','Josh, I will say this gently. It is me. It is always me.'],
 ['d','Hey {dg}, what is the worst thing about being a Captain?','The paperwork. And the radio. And Doug.'],
 ['d','Josh, how many times have you crashed a boat?','Once. And I will not talk about it.'],
