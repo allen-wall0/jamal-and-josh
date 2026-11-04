@@ -30,6 +30,8 @@ const MOODS={
  3:{el:18,az:150,turb:18,ray:.7,mie:.03,mg:.7,sun:0xdfe6f2,si:1.1,env:.3,exp:.85,fog:0x474e58,fd:1.1,bloom:.4,hor:0x6a7078,zen:0x2c343e},
  4:{el:2,az:250,turb:12,ray:2.6,mie:.02,mg:.85,sun:0xff9050,si:1.5,env:.26,exp:.8,fog:0x483630,fd:1.2,bloom:.5,hor:0x7a4c36,zen:0x221c28},
  5:{el:-4,az:210,turb:6,ray:.3,mie:.005,mg:.7,sun:0x7090ff,si:.35,env:.2,exp:.95,fog:0x0b0f16,fd:1.4,bloom:.7,hor:0x121828,zen:0x03050a},
+ stealth:{el:-2,az:200,turb:6,ray:.3,mie:.005,mg:.7,sun:0x6080ff,si:.3,env:.18,exp:.95,fog:0x0c1118,fd:1.3,bloom:.6,hor:0x121a28,zen:0x04060c},
+ drive:{el:3,az:180,turb:10,ray:2,mie:.015,mg:.8,sun:0xff9a50,si:1.5,env:.3,exp:.82,fog:0x4a3a34,fd:.75,bloom:.6,hor:0x7a5238,zen:0x1e2030},
  arena:{el:1,az:230,turb:14,ray:3,mie:.03,mg:.88,sun:0xff6030,si:1.6,env:.26,exp:.78,fog:0x3a2018,fd:.9,bloom:.7,hor:0x6a3022,zen:0x180c0e}};
 export function createGfx({rd,sc,cam,W,H}){
  let name=gfxName();const retro=name==='retro',auto=name==='auto';if(auto)name='high';
